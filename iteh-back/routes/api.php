@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 //timovi
 
+use App\Http\Controllers\TeamController;
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('teams', [TeamController::class, 'index']);
     Route::get('teams/{id}', [TeamController::class, 'show']);
@@ -37,3 +38,16 @@ Route::middleware('auth:sanctum')->group(function () {
   
 });
 
+
+
+use App\Http\Controllers\GameController;
+
+//utakmice
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('games', [GameController::class, 'index']);
+    Route::get('games/{id}', [GameController::class, 'show']);
+    Route::post('games', [GameController::class, 'store']);
+    Route::put('games/{id}', [GameController::class, 'update']);
+    Route::delete('games/{id}', [GameController::class, 'destroy']);
+});
