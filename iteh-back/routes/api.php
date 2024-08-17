@@ -13,3 +13,49 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 
+use App\Http\Controllers\PlayerController;
+
+//igraci
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('players', [PlayerController::class, 'index']);
+    Route::get('players/{id}', [PlayerController::class, 'show']);
+    Route::post('players', [PlayerController::class, 'store']);
+    Route::put('players/{id}', [PlayerController::class, 'update']);
+    Route::delete('players/{id}', [PlayerController::class, 'destroy']);
+   
+});
+
+//timovi
+
+use App\Http\Controllers\TeamController;
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('teams', [TeamController::class, 'index']);
+    Route::get('teams/{id}', [TeamController::class, 'show']);
+    Route::post('teams', [TeamController::class, 'store']);
+    Route::put('teams/{id}', [TeamController::class, 'update']);
+    Route::delete('teams/{id}', [TeamController::class, 'destroy']);
+  
+});
+
+
+
+use App\Http\Controllers\GameController;
+
+//utakmice
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('games', [GameController::class, 'index']);
+    Route::get('games/{id}', [GameController::class, 'show']);
+    Route::post('games', [GameController::class, 'store']);
+    Route::put('games/{id}', [GameController::class, 'update']);
+    Route::delete('games/{id}', [GameController::class, 'destroy']);
+});
+
+
+use App\Http\Controllers\TournamentController;
+//turniri
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('tournaments', TournamentController::class);
+});
