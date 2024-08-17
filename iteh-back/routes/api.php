@@ -51,3 +51,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('games/{id}', [GameController::class, 'update']);
     Route::delete('games/{id}', [GameController::class, 'destroy']);
 });
+
+
+use App\Http\Controllers\TournamentController;
+//turniri
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('tournaments', TournamentController::class);
+});
