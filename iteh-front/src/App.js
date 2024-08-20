@@ -7,6 +7,9 @@ import Signup from "./Components/Signup";
 import GuestLogin from "./Components/GuestLogin";
 import PrivateRoute from "./Components/PrivateRout";
 import Tournaments from "./Components/Tournaments";
+import CreateTournament from "./Components/CreateTournament";
+import AddTeams from "./Components/AddTeams";
+import CreateNewTeam from "./Components/CreateNewTeam";
 const App = () => {
   return (
     <Router>
@@ -19,6 +22,18 @@ const App = () => {
             <PrivateRoute>
             <Tournaments />
          </PrivateRoute>} />
+         <Route path="/create-tournament" element={
+             <PrivateRoute>
+                <CreateTournament />
+             </PrivateRoute>
+            } />
+          <Route path="/add-teams" element={
+            <PrivateRoute>
+                <AddTeams />
+             </PrivateRoute>} />
+          <Route path="/create-new-team" element={<PrivateRoute>
+                <CreateNewTeam />
+             </PrivateRoute>} />
         </Routes>
       </div>
     </Router>
