@@ -10,6 +10,8 @@ import Tournaments from "./Components/Tournaments";
 import CreateTournament from "./Components/CreateTournament";
 import AddTeams from "./Components/AddTeams";
 import CreateNewTeam from "./Components/CreateNewTeam";
+import Teams from "./Components/Teams"; 
+import Players from "./Components/Players";
 const App = () => {
   return (
     <Router>
@@ -34,6 +36,14 @@ const App = () => {
           <Route path="/create-new-team" element={<PrivateRoute>
                 <CreateNewTeam />
              </PrivateRoute>} />
+             <Route path="/teams" element={
+            <PrivateRoute>
+            <Teams />
+         </PrivateRoute>} /> 
+          <Route path="/players" element={
+            <PrivateRoute>
+            <Players />
+         </PrivateRoute>} />
         </Routes>
       </div>
     </Router>
