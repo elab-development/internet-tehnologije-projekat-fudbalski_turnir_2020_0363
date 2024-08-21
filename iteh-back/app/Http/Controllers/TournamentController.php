@@ -13,7 +13,7 @@ use App\Models\Team;
 use App\Models\Player;
 use MongoDB\Client;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Auth;  
 class TournamentController extends Controller
 {
     public function index()
@@ -243,7 +243,47 @@ class TournamentController extends Controller
        
     }
 
-  
+    public function addToFavorite(Request $request,$id){
+        try{
+            $user = Auth::user();
+            $tournament = Tournament::findOrFail($id);
+            $user->tournaments()->save($tournament);
+            return response()->json(['success' => true, 'message' => 'Uspesno dodat turnir u omiljene: ' ], 200);
+        }
+        catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            return response()->json(['success' => false,'message' => 'Nije uspesno dodat turnir u omiljene'], 500);
+        }
 
+      
+    }
+
+    public function removeFromFavorites(Request $request,$id){
+        
+        try{
+            $user = Auth::user();
+            $tournament = Tournament::findOrFail($id);
+            $user->tournaments()->detach($tournament->_id);
+            $tournament->users()->detach($user->_id);
+            
+            return response()->json(['success' => true, 'message' => 'Uspesno uklonjen turnir iz omiljenih: ' ], 200);
+        }
+        catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            return response()->json(['success' => false,'message' => 'Nije uspesno uklonjen turnir iz omiljenih'], 500);
+        }
+       
+    }
+
+    public function getFavorites(Request $request){
+        try{
+            $user = Auth::user();
+            return TournamentResource::collection($user->tournaments);
+        }
+        catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Ne mogu da se vrate turniri: ' . $e->getMessage()], 500);
+        }
+    }
   
 }

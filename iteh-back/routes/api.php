@@ -63,10 +63,13 @@ use App\Http\Controllers\TournamentController;
 //tournaments
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('tournaments/favorites', [TournamentController::class, 'getFavorites']);
     Route::apiResource('tournaments', TournamentController::class)->only([
         'index', 'show'
     ]);
    
+    Route::post('tournaments/favorites/{id}', [TournamentController::class, 'addToFavorite']);
+    Route::delete('tournaments/favorites/{id}', [TournamentController::class, 'removeFromFavorites']);
 
     Route::middleware('role:admin')->group(function () {
         Route::apiResource('tournaments', TournamentController::class)->only([
@@ -74,3 +77,4 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
     });
 });
+
