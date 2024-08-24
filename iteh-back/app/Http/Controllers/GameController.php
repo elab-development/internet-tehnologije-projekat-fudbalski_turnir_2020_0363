@@ -133,4 +133,96 @@ class GameController extends Controller
         }
         
     }
+
+    public function updateWinner(Request $request,$id){
+        try{
+            $game = Game::findOrFail($id);
+            $home_team_goals = $game->broj_golova_domacin;
+            $away_team_goals = $game->broj_golova_gost;
+            if($home_team_goals>$away_team_goals || $home_team_goals<$away_team_goals){
+                $game->status = 'completed';
+            }
+            else{
+                return response()->json(['stat'=>false,'message' => 'Broj golova ne sme biti jednak da bi se zavrsila utakmica']);
+            }
+            if($home_team_goals>$away_team_goals){
+                $game->pobednik =$game->tim1;
+            }
+            else{
+                $game->pobednik = $game->tim2;
+            }
+    
+            $br = $game->broj_utakmice;
+            if($br!==1){
+                $new_game_num = intdiv($br,2);
+                $matchingGame = Game::where('broj_utakmice', $new_game_num)
+                ->where('tournament_id', $game->tournament_id)
+                ->first();
+               
+    
+                function createPlayerStatsForTeam($team, $gameId) {
+                    foreach ($team->players as $player) {
+                        $playerStats = PlayerStats::create([
+                            'broj_golova' => 0,
+                            'broj_asistencija' => 0,
+                            'broj_zutih_kartona' => 0,
+                            'broj_crvenih_kartona' => 0,
+                            'broj_suta_u_ovkir' => 0,
+                            'broj_suta_van_okvira' => 0,
+                            'player_id' => $player->_id,
+                            'game_id' => $gameId
+                        ]);
+                
+                        $player->stats_player()->save($playerStats);
+                    }
+                }
+                
+               
+                
+    
+                $home = $br%2;
+                if($home){
+                    $matchingGame->team1()->associate($game->pobednik);
+                    $homeTeam = $matchingGame->team1;
+                    createPlayerStatsForTeam($homeTeam, $matchingGame->_id);
+                 
+            
+               
+                }
+                else{
+                    $matchingGame->team2()->associate($game->pobednik);
+                    $awayTeam = $matchingGame->team2;
+                    createPlayerStatsForTeam($awayTeam, $matchingGame->_id);
+                   
+                }
+                $matchingGame->save();
+            }
+          
+    
+            $game->save();
+    
+            return response()->json(['stat'=>true,'message' => 'Uspesno zavrsena utakmica']);
+        }
+        catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            return response()->json(['error' => 'An error occurred'], 500);
+        }
+      
+
+    }
+
+
+    public function updateStatus(Request $request,$id){
+        try{
+            $game = Game::findOrFail($id);
+            $game->status = $request->input('status');
+            $game->save();
+        }
+        catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            return response()->json(['error' => 'An error occurred'], 500);
+        }
+      
+
+    }
 }
