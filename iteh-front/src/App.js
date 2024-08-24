@@ -12,6 +12,9 @@ import AddTeams from "./Components/AddTeams";
 import CreateNewTeam from "./Components/CreateNewTeam";
 import Teams from "./Components/Teams"; 
 import Players from "./Components/Players";
+import Bracket from "./Components/Bracket";
+import Matches from "./Components/Matches";
+import Favorites from "./Components/Favorites";
 const App = () => {
   return (
     <Router>
@@ -44,6 +47,18 @@ const App = () => {
             <PrivateRoute>
             <Players />
          </PrivateRoute>} />
+         <Route path="/bracket/:id" element={
+            <PrivateRoute>
+            <Bracket />
+         </PrivateRoute>} />
+          <Route path="/matches/:id" element={
+            <PrivateRoute>
+            <Matches />
+         </PrivateRoute>} />
+         <Route path="/favourite" element={
+          <PrivateRoute>
+          <Favorites />
+       </PrivateRoute>} />
         </Routes>
       </div>
     </Router>

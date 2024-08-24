@@ -206,8 +206,7 @@ class TournamentController extends Controller
     {
         try{
             $tournament = Tournament::findOrFail($id);
-            //return new TournamentResource($tournament);
-            return response()->json($tournament, 200);
+            return new TournamentResource($tournament);
         }
         catch (\Exception $e) {
             \Log::error($e->getMessage());

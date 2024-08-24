@@ -49,14 +49,13 @@ class GameController extends Controller
 
    
  
-    public function update(Request $request, $id)
+    public function destroy($id)
     {
 
         try{
 
-            $game = Game::findOrFail($id);
-            $game->update($request->all());
-            return response()->json(['message' => 'Game updated successfully']);
+            Game::destroy($id);
+            return response()->json(null, 204);
         }
         catch (\Exception $e) {
             \Log::error($e->getMessage());
@@ -68,7 +67,7 @@ class GameController extends Controller
 
     
 
-    public function destroy($id)
+    public function update(Request $request, $id)
     {
         try{
             $game = Game::findOrFail($id);

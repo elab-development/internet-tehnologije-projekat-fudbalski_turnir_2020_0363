@@ -52,6 +52,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('games/{id}', [GameController::class, 'show']);
      
     Route::middleware('role:admin')->group(function () {   
+        Route::put('games/status/{id}', [GameController::class, 'updateStatus']);
+        Route::put('games/finish/{id}', [GameController::class, 'updateWinner']);
         Route::post('games', [GameController::class, 'store']);
         Route::put('games/{id}', [GameController::class, 'update']);
         Route::delete('games/{id}', [GameController::class, 'destroy']);
