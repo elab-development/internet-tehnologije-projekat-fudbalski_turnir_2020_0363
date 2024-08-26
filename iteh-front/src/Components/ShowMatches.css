@@ -1,0 +1,65 @@
+.show_matches{
+  font-family: Arial, sans-serif;
+    margin: 80px;
+}
+
+.games-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px;
+  }
+  
+  .game-card {
+    background-color: #f4f4f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: 10px;
+    padding: 15px;
+    width: 45%;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .game-card img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+  
+  .game-card .team-names {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .pagination li {
+    margin: 0 5px;
+  }
+  
+  .pagination li a {
+    color: #007bff;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+  
+  .pagination li a.active {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .pagination li a:hover:not(.active) {
+    background-color: #ddd;
+  }
+  
