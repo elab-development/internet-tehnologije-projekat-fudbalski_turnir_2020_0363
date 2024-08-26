@@ -15,6 +15,8 @@ import Players from "./Components/Players";
 import Bracket from "./Components/Bracket";
 import Matches from "./Components/Matches";
 import Favorites from "./Components/Favorites";
+import PremierLeague from "./Components/PremierLeague";
+import ShowMatches from "./Components/ShowMatches";
 const App = () => {
   return (
     <Router>
@@ -58,6 +60,14 @@ const App = () => {
          <Route path="/favourite" element={
           <PrivateRoute>
           <Favorites />
+       </PrivateRoute>} />
+       <Route path="/premier-league" element={
+             <PrivateRoute>
+             <PremierLeague />
+          </PrivateRoute>} />
+          <Route path="/premier-league/matches" element={
+          <PrivateRoute>
+          <ShowMatches />
        </PrivateRoute>} />
         </Routes>
       </div>
