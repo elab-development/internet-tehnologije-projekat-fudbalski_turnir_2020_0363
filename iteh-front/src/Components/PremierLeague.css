@@ -1,0 +1,34 @@
+.PremierLeague {
+    font-family: Arial, sans-serif;
+    margin: 80px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  th{
+    background-color:  #1a1aff;
+    color: #ddd;
+  }
+  
+  th, td {
+    padding: 10px;
+    border: 1px solid #d5cfcf;
+    text-align: center;
+  }
+  td{
+    background-color: #ddd;
+  }
+
+  
+  img {
+    vertical-align: middle;
+  }
+
+  body{
+    height: 100%;
+  }
+  
