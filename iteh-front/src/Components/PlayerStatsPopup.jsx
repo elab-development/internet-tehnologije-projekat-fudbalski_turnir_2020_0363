@@ -4,7 +4,7 @@ import './PlayerStatsPopup.css';
 import {useLocation } from 'react-router-dom';
 import EnterStatsPopup from './EnterStatsPopup';
 import MatchDetailsPopup from './MatchDetailsPopup';
-
+import Pusher from 'pusher-js';
 
 const PlayerStatsPopup = ({ id, onClose,matchStatus }) => {
   const [playerStats, setPlayerStats] = useState({
@@ -13,9 +13,10 @@ const PlayerStatsPopup = ({ id, onClose,matchStatus }) => {
     homeName:'',
     awayName:''
   });
+
   const location = useLocation();
   const [showMatchDetails, setShowMatchDetails] = useState(false);
-  const [showPlayerStats, setShowPlayerStats] = useState(true); // Initially show player stats
+  const [showPlayerStats, setShowPlayerStats] = useState(true); 
   const [showEnterStatsPopup, setShowEnterStatsPopup] = useState(false);
   const { role } = location.state || {};
 
@@ -29,47 +30,63 @@ const PlayerStatsPopup = ({ id, onClose,matchStatus }) => {
           }
         });
         const data = response.data.data;
-
-        // Izvlačenje podataka o igračima za oba tima
-        const homeTeamStats = data.home_team.players.map(player => ({
-          name: player.name,
-          number: player.number,
-          goals: player.player_stats.broj_golova,
-          assists: player.player_stats.broj_asistencija,
-          yellowCards: player.player_stats.broj_zutih_kartona,
-          redCards: player.player_stats.broj_crvenih_kartona,
-          shotsOnTarget: player.player_stats.broj_suta_u_ovkir,
-          shotsOffTarget: player.player_stats.broj_suta_van_okvira
-        }));
-
-        const awayTeamStats = data.away_team.players.map(player => ({
-          name: player.name,
-          number: player.number,
-          goals: player.player_stats.broj_golova,
-          assists: player.player_stats.broj_asistencija,
-          yellowCards: player.player_stats.broj_zutih_kartona,
-          redCards: player.player_stats.broj_crvenih_kartona,
-          shotsOnTarget: player.player_stats.broj_suta_u_ovkir,
-          shotsOffTarget: player.player_stats.broj_suta_van_okvira
-        }));
-
-        setPlayerStats({
-          homeTeam: homeTeamStats,
-          awayTeam: awayTeamStats,
-          homeName:data.home_team.name,
-          awayName:data.away_team.name
-        });
+        populateStats(data);
+      
       } catch (error) {
         console.error("Error fetching player stats:", error);
       }
     };
     fetchPlayerStats();
 
-    const intervalId = setInterval(fetchPlayerStats, 20000);
+    const pusher = new Pusher('1ef4a6a15882c25d1174', {
+      cluster: 'eu',
+      encrypted: true
+    });
 
-    // Clean up the interval on component unmount
-    return () => clearInterval(intervalId);
-  }, [id]);
+    const channel = pusher.subscribe('game.' + id);
+    channel.bind('match-stats-updated', function(data) {
+      fetchPlayerStats();
+    });
+
+    return () => {
+      pusher.unsubscribe('game.' + id);
+     
+    };
+
+  }, []);
+
+
+  const populateStats =  (data) =>{
+    console.log(data);
+    const homeTeamStats = data.home_team.players.map(player => ({
+      name: player.name,
+      number: player.number,
+      goals: player.player_stats.broj_golova,
+      assists: player.player_stats.broj_asistencija,
+      yellowCards: player.player_stats.broj_zutih_kartona,
+      redCards: player.player_stats.broj_crvenih_kartona,
+      shotsOnTarget: player.player_stats.broj_suta_u_ovkir,
+      shotsOffTarget: player.player_stats.broj_suta_van_okvira
+    }));
+
+    const awayTeamStats = data.away_team.players.map(player => ({
+      name: player.name,
+      number: player.number,
+      goals: player.player_stats.broj_golova,
+      assists: player.player_stats.broj_asistencija,
+      yellowCards: player.player_stats.broj_zutih_kartona,
+      redCards: player.player_stats.broj_crvenih_kartona,
+      shotsOnTarget: player.player_stats.broj_suta_u_ovkir,
+      shotsOffTarget: player.player_stats.broj_suta_van_okvira
+    }));
+
+    setPlayerStats({
+      homeTeam: homeTeamStats,
+      awayTeam: awayTeamStats,
+      homeName:data.home_team.name,
+      awayName:data.away_team.name
+    });
+  }
 
 
 // Handle clicking "Statistika Meča"

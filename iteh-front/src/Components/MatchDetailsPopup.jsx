@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import PlayerStatsPopup from './PlayerStatsPopup';
 import EnterStatsPopup from './EnterStatsPopup';
+import Pusher from 'pusher-js';
 
 const MatchDetailsPopup = ({ id, onClose }) => {
   const [showMatchDetails, setShowMatchDetails] = useState(true);
@@ -23,18 +24,31 @@ const MatchDetailsPopup = ({ id, onClose }) => {
         });
 
         setMatchData(response.data);
-        console.log(response.data.data.status);
+       
       } catch (error) {
         console.error("Error fetching match data:", error);
       }
     };
     fetchMatchData();
 
-    const intervalId = setInterval(fetchMatchData, 20000);
+    const pusher = new Pusher('1ef4a6a15882c25d1174', {
+      cluster: 'eu',
+      encrypted: true
+    });
 
-    // Clean up the interval on component unmount
-    return () => clearInterval(intervalId);
-  }, [id]);
+    const channel = pusher.subscribe('game.' + id);
+    channel.bind('match-stats-updated', function(data) {
+      console.log('PUSHEEER');
+      fetchMatchData();
+    });
+
+    return () => {
+      pusher.unsubscribe('game.' + id);
+     
+    };
+   
+  }, []);
+
 
   const handlePlayerStats = () => {
     setShowMatchDetails(false);
@@ -69,11 +83,11 @@ const MatchDetailsPopup = ({ id, onClose }) => {
   const calculateTeamStats = (team) => {
     let yellowCards = 0;
     let redCards = 0;
-    console.log(matchData);
+    
     
     if(matchData){
       team.players.forEach(player => {
-        console.log(player);
+
         yellowCards += player.player_stats.broj_zutih_kartona;
         
         redCards += player.player_stats.broj_crvenih_kartona;
