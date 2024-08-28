@@ -4,7 +4,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import './Bracket.css';
 import NavigationMenu from './NavigationMenu';
 import { toPng } from 'html-to-image';
-
+import Pusher from 'pusher-js';
 const Bracket = () => {
   const [tournaments, setTournaments] = useState([]);
   const [tournament, setTournament] = useState(null);
@@ -58,10 +58,23 @@ const Bracket = () => {
 
   useEffect(() => {
     fetchTournament(); 
-    const intervalId = setInterval(fetchTournament, 10000);
+   
+    const pusher = new Pusher('1ef4a6a15882c25d1174', {
+      cluster: 'eu',
+      encrypted: true
+    });
 
-    return () => clearInterval(intervalId);
-  }, [fetchTournament]);
+    const channel = pusher.subscribe('tournament.' + id);
+    channel.bind('tournament-stats-updated', function(data) {
+      fetchTournament();
+    });
+
+    return () => {
+      pusher.unsubscribe('tournament.' + id);
+     
+    };
+
+  }, [id]);
 
   useEffect(() => {
     if (tournament) {
@@ -70,6 +83,7 @@ const Bracket = () => {
   }, [tournament]);
 
   const [matches, setMatches] = useState([]);
+  
   useEffect(() => {
     const stages = generateStages(matches);
     updateStagesWithWinners(stages);

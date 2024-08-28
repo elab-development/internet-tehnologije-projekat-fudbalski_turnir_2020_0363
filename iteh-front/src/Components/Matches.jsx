@@ -4,7 +4,7 @@ import './Matches.css';
 import axios from 'axios';
 import NavigationMenu from './NavigationMenu';
 import MatchDetailsPopup from './MatchDetailsPopup';
-
+import Pusher from 'pusher-js';
 const Matches = () => {
   const [tournaments, setTournaments] = useState([]);
   const [tournament, setTournament] = useState(null);
@@ -63,14 +63,26 @@ const Matches = () => {
     }
   }, [id]);
 
-  // Postavi periodično osvežavanje podataka
+ 
   useEffect(() => {
+    fetchTournament(); 
    
-    fetchTournament(); // Pozovi odmah na mount
-    const intervalId = setInterval(fetchTournament, 10000); // Osvežavaj svakih 10 sekundi
+    const pusher = new Pusher('1ef4a6a15882c25d1174', {
+      cluster: 'eu',
+      encrypted: true
+    });
 
-    return () => clearInterval(intervalId); // Očisti interval kada se komponenta unmount-uje
-  }, [fetchTournament]);
+    const channel = pusher.subscribe('tournament.' + id);
+    channel.bind('tournament-stats-updated', function(data) {
+      fetchTournament();
+    });
+
+    return () => {
+      pusher.unsubscribe('tournament.' + id);
+     
+    };
+
+  }, [id]);
 
   useEffect(() => {
   
@@ -118,12 +130,7 @@ const Matches = () => {
         data: { status },
       };
       await axios.request(config);
-      // const updatedMatches = matches.map(match => {
-      //   if (match.id === id) {
-      //     return { ...match, status };
-      //   }
-      //   return match;
-      // });
+  
      fetchTournament();
       
       console.log(matches);

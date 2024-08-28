@@ -6,7 +6,9 @@ use App\Models\Game;
 use App\Models\Team;
 use Illuminate\Http\Request;
 use App\Models\PlayerStats;
-
+use App\Events\TournamentUpdated;
+use App\Events\MatchStatsUpdated;
+use App\Models\Tournament;
 class GameController extends Controller
 {
     public function index()
@@ -124,6 +126,9 @@ class GameController extends Controller
             $game->broj_golova_gost = $totalAwayGoals;
             $game->save();
 
+
+            broadcast(new MatchStatsUpdated($game->_id));
+            broadcast(new TournamentUpdated($game->tournament_id));
             return response()->json(['message' => 'Game and player stats updated successfully']);
         }
         catch (\Exception $e) {
@@ -199,7 +204,7 @@ class GameController extends Controller
           
     
             $game->save();
-    
+          
             return response()->json(['stat'=>true,'message' => 'Uspesno zavrsena utakmica']);
         }
         catch (\Exception $e) {
@@ -216,6 +221,7 @@ class GameController extends Controller
             $game = Game::findOrFail($id);
             $game->status = $request->input('status');
             $game->save();
+            broadcast(new TournamentUpdated($game->tournament_id));
         }
         catch (\Exception $e) {
             \Log::error($e->getMessage());
