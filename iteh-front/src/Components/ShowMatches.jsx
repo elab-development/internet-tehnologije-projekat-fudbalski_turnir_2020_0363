@@ -4,26 +4,24 @@ import Pagination from './Pagination';
 import './ShowMatches.css';
 import NavigationButtons from './NavigationButtons';
 import NavigationMenu from './NavigationMenu';
-
+ 
 const ShowMatches = () => {
   const [matches, setMatches] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 38;
-
+ 
   useEffect(() => {
     const fetchMatches = async () => {
-      const response = await axios.get(
-        `/v4/competitions/PL/matches?matchday=${currentPage}`,
-        {
-          headers: { 'X-Auth-Token': '3f67e6c5848344f99e46142768ce07fa' },
-        }
-      );
+      const response = await axios.get(`http://localhost:8000/api/matches`, {
+        params: { matchday: currentPage }
+      });
+ 
       setMatches(response.data.matches);
     };
-
+ 
     fetchMatches();
   }, [currentPage]);
-
+ 
   return (
     <div className="show_matches">
       <NavigationMenu role={window.sessionStorage.getItem("role")} />
@@ -47,7 +45,7 @@ const ShowMatches = () => {
               <span style={{ fontWeight: match.score.winner === 'AWAY_TEAM' ? 'bold' : 'normal' }}>
                 {match.awayTeam.name}
               </span>
-
+ 
             </div>
             <img src={`https://crests.football-data.org/${match.awayTeam.id}.svg`} alt={match.awayTeam.name} />
             <div>{new Date(match.utcDate).toLocaleDateString()}</div>
@@ -58,5 +56,5 @@ const ShowMatches = () => {
     </div>
   );
 };
-
+ 
 export default ShowMatches;

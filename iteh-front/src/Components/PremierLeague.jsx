@@ -3,30 +3,30 @@ import axios from 'axios';
 import NavigationButtons from './NavigationButtons';
 import NavigationMenu from './NavigationMenu';
 import './PremierLeague.css';
-
+ 
 const PremierLeague = () => {
   const [standings, setStandings] = useState([]);
-  const [season, setSeason] = useState(2024); 
-
+  const [season, setSeason] = useState(2024);
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/v4/competitions/PL/standings/?season=${season}`, {
-          headers: { 'X-Auth-Token': '3f67e6c5848344f99e46142768ce07fa' }
+        const response = await axios.get(`http://localhost:8000/api/standings`, {
+          params: { season: season }
         });
         setStandings(response.data.standings[0].table);
       } catch (error) {
         console.error("Error fetching the data", error);
       }
     };
-
+ 
     fetchData();
-  }, [season]); 
-
+  }, [season]);
+ 
   const handleSeasonChange = (event) => {
     setSeason(event.target.value);
   };
-
+ 
   return (
     <div className="PremierLeague">
        <NavigationMenu role={window.sessionStorage.getItem("role")}/>
@@ -34,11 +34,11 @@ const PremierLeague = () => {
       <NavigationButtons />
       <label htmlFor="season">Select Season: </label>
       <select id="season" value={season} onChange={handleSeasonChange}>
-        {Array.from({ length: 2024 - 1981 + 1 }, (_, i) => 1981 + i).map(year => (
+        {Array.from({ length: 2024 - 2020 + 1 }, (_, i) => 2020 + i).map(year => (
           <option key={year} value={year}>{year}</option>
         ))}
       </select>
-
+ 
       <table>
         <thead>
           <tr>
@@ -77,5 +77,5 @@ const PremierLeague = () => {
     </div>
   );
 };
-
+ 
 export default PremierLeague;
